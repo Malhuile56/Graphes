@@ -5,7 +5,7 @@ import json
 import matplotlib.pyplot as plt
 import networkx as nx
 
-#Question 6.1
+# Question 6.1
 def enlever_elem(nom):
     """Fonction enlevant les éléments indésirable dans les noms des acteurs
     
@@ -46,7 +46,7 @@ def convertisseur(fichier):
 
 print(convertisseur("données/data_100.txt"))
 
-#Question 6.2
+# Question 6.2
 def collab_commun(acteur1, acteur2,fichier):
     """Fonction renvoyant l'ensemble des acteurs ayant collaboré avec ces 2 acteurs placé en parametre'
 
@@ -55,19 +55,15 @@ def collab_commun(acteur1, acteur2,fichier):
         acteur2 : un acteur
         fichier : un fichier .txt
     """
-    # Initialisation de l'ensemble des collaborateurs
-    collab = set()
-    # Appel de la fonction convertisseur pour reprendre le Graph
-    G = convertisseur(fichier)
-
-    # Pour chaque acteur du graph s'il n'est pas égal aux 2 acteurs et qu'il a déjà travaillé avec ces 2 acteurs, on l'ajouterai à l'ensemble
-    for acteur in G.nodes:
+    collab = set() # Initialisation de l'ensemble des collaborateurs
+    G = convertisseur(fichier) # Appel de la fonction convertisseur pour reprendre le Graph
+    for acteur in G.nodes: # Pour chaque acteur du graph s'il n'est pas égal aux 2 acteurs et qu'il a déjà travaillé avec ces 2 acteurs, on l'ajouterai à l'ensemble
         if acteur != acteur1 and acteur != acteur2:
             if (acteur1,acteur) in G.edges and (acteur2,acteur) in G.edges:
                 collab.add(acteur)
     return collab
 
-#Question 6.3
+# Question 6.3
 # Fonction donnée
 def collaborateurs_proches(G,u,k):
     """Fonction renvoyant l'ensemble des acteurs à distance au plus k de l'acteur u dans le graphe G. La fonction renvoie None si u est absent du graphe.
@@ -100,35 +96,19 @@ def collaborateurs_proches(acteur_dep,acteur_fin,fichier):
         acteur_fin : le somemt de fin
         fichier : un fichier .txt
     """
-    # Appel de la fonction convertisseur pour reprendre le Graph
-    G = convertisseur(fichier)
-
-    #si l'acteur placé en parametre n'est pas dans le graph return None
-    if acteur_dep not in G.nodes:
+    G = convertisseur(fichier) # Appel de la fonction convertisseur pour reprendre le Graph
+    if acteur_dep not in G.nodes: # Si l'acteur placé en parametre n'est pas dans le graph return None
         print(acteur_dep,"est un illustre inconnu")
         return None
-    
-    # Initialisation de l'ensemble des collaborateurs 
-    collaborateurs = set()
-    # On ajoute dans l'ensemble l'acteur de départ
-    collaborateurs.add(acteur_dep)
-    # Inialisation d'un compteur pour calculer la distance entre ces 2 acteurs
-    count = 0
-
-    # Tant que l'acteur de fin n'est pas dans l'ensemble des collaborateurs, parcourir en largeur le graph
-    while acteur_fin not in collaborateurs:
-        # Initialisation d'un testeur d'action pour vérifier que nous ne sommes pas dans une boucle infini
-        test = False 
-        
-        # Inialisationd d'un nouvel ensemble des collaborateurs direct pour chaque tour de boucle
-        collaborateurs_directs = set()
-
-        # Parcours de chaque collaborateurs
-        for c in collaborateurs:
-            # Parcours de tout les voisins des collaborateurs 
-            for voisin in G.adj[c]:
-        # On ajoute ces voisins à l'ensemble des collaborateurs s'ils ne sont pas déjà dedans et on ajoute 1 au compteur 
-                if voisin not in collaborateurs:
+    collaborateurs = set() # Initialisation de l'ensemble des collaborateurs 
+    collaborateurs.add(acteur_dep) # On ajoute dans l'ensemble l'acteur de départ
+    count = 0 # Inialisation d'un compteur pour calculer la distance entre ces 2 acteurs
+    while acteur_fin not in collaborateurs: # Tant que l'acteur de fin n'est pas dans l'ensemble des collaborateurs, parcourir en largeur le graph
+        test = False # Initialisation d'un testeur d'action pour vérifier que nous ne sommes pas dans une boucle infini
+        collaborateurs_directs = set() # Inialisationd d'un nouvel ensemble des collaborateurs direct pour chaque tour de boucle
+        for c in collaborateurs: # Parcours de chaque collaborateurs
+            for voisin in G.adj[c]: # Parcours de tout les voisins des collaborateurs 
+                if voisin not in collaborateurs: # On ajoute ces voisins à l'ensemble des collaborateurs s'ils ne sont pas déjà dedans et on ajoute 1 au compteur
                     collaborateurs_directs.add(voisin)
                     test = True
         count +=1
@@ -147,13 +127,8 @@ def central(acteur,fichier):
         acteur : nom de l'acteur dont on veut la centralité
         fichier : un fichier .txt
     """
-    # Appel de la fonction convertisseur pour reprendre le Graph
-    G = convertisseur(fichier)
-
-    # Initialisation d'un dictionnaire de la centralisation de chaque acteur
-    dico = nx.centrality.betweenness.betweenness_centrality(G)
-
-
+    G = convertisseur(fichier) # Appel de la fonction convertisseur pour reprendre le graph
+    dico = nx.centrality.betweenness.betweenness_centrality(G) # Initialisation d'un dictionnaire de la centralisation de chaque acteur
     for nom, value in dico.items():
         if acteur == nom:
             return value
@@ -167,33 +142,25 @@ def pluscentral(fichier):
     Parametres:
         fichier : un fichier .txt
     """
-    # Appel de la fonction convertisseur pour reprendre le Graph
-    G = convertisseur(fichier)
-    # l'acteur avec la valeur max de centralité
-    valmax=0
+    G = convertisseur(fichier) # Appel de la fonction convertisseur pour reprendre le Graph
+    valmax=0 # l'acteur avec la valeur max de centralité
     actmax=""
-
-    # Boucle for cherchant la valeur max de centralité et renvoyant l'acteur avec la plus haute valeur de centralité
-    for acteur in G.nodes:
+    for acteur in G.nodes: # Boucle for cherchant la valeur max de centralité et renvoyant l'acteur avec la plus haute valeur de centralité
         if central(acteur,fichier) > valmax:
             valmax=central(acteur,fichier)
             actmax=acteur
     return actmax
 
-#Question 6.5
+# Question 6.5
 def pluseloigne(fichier):
     """Fonction renvoyant le couple d'acteur/actrice le plus éloigné
     Parametres:
         fichier : un fichier .txt
     """
-    # Appel de la fonction convertisseur pour reprendre le Graph
-    G = convertisseur(fichier)
-    # la distance qui sera la plus éloigné et leurs acteurs
-    distmax = 0
+    G = convertisseur(fichier) # Appel de la fonction convertisseur pour reprendre le Graph
+    distmax = 0 # La distance qui sera la plus éloigné et leurs acteurs
     actmax=("","")
-
-    # Parcours de toutes les arrètes du Graph
-    for (acteur1,acteur2) in G.edges:
+    for (acteur1,acteur2) in G.edges: # Parcours de toutes les arrètes du graph
         if collaborateurs_proches(acteur1,acteur2,fichier)>distmax:
             distmax=collaborateurs_proches(acteur1,acteur2,fichier)
             actmax=(acteur1,acteur2)
